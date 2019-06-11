@@ -21,6 +21,7 @@ Or install it yourself as:
 ## Usage
 
 run `bin/gig topic:ruby topic:rails`
+
 `ls topic:ruby-topic:rails/` contains all matching `repository` owner images
 
 ## Development
