@@ -2,8 +2,6 @@ require "net/http"
 require "open-uri"
 require 'json'
 
-require 'pry'
-
 ITEMS_PER_PAGE = 50
 API_URL        = "https://api.github.com"
 

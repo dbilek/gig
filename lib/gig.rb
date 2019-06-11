@@ -1,6 +1,5 @@
 require "gig/version"
 require "gig/greper"
-require 'pry'
 
 module Gig
   def self.call(options = [])
