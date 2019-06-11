@@ -35,6 +35,7 @@ module Gig
         items.each do |item|
           avatar_url  = item["owner"]["avatar_url"]
           download_image(avatar_url, directory_name)
+          print "."
         end
 
         show_download_info(images_before, directory_name)
@@ -68,7 +69,7 @@ module Gig
       raise StandardError.new("Missing storage directory") unless Dir.exist?(directory_name)
 
       avatar_name = "avatar_" + avatar_url.split("/").last.split("?").first + ".jpg"
-      return if File.exist?("#{directory_name}/#{avatar_name}.jpg")
+      return if File.exist?("#{directory_name}/#{avatar_name}")
 
       open(avatar_url) do |image|
         File.open("#{directory_name}/#{avatar_name}", "wb") do |file|
@@ -81,6 +82,7 @@ module Gig
       all_images        = count_files(directory_name)
       downloaded_images = (images_before - all_images).abs
 
+      puts
       puts "Total: #{all_images} images"
       if downloaded_images > 0
         puts "Downloaded #{downloaded_images} images."
@@ -95,7 +97,7 @@ module Gig
     end
 
     def handle_pagination(response_link)
-      puts "Do want to continue with another page? Type 'yes' or 'no'"
+      puts "Do want to continue with next page? Type 'yes' or 'no'"
       user_answer = STDIN.gets.strip
 
       if user_answer == "yes"
