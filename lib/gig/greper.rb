@@ -20,10 +20,11 @@ module Gig
 
     def grep
       begin
-        response        = get_http_response(uri)
-        response_parsed = JSON.parse(response.body)
+        response         = get_http_response(uri)
+        response_parsed  = JSON.parse(response.body)
+        response_message = response_parsed["message"]
 
-        raise StandardError.new(response_parsed["message"]) unless response.code == "200"#is_a?(Net::HTTPSuccess)
+        raise StandardError.new(response_message) unless response.code == "200"
 
         items           = response_parsed["items"]
         directory_name  = options.join("-")
@@ -83,10 +84,10 @@ module Gig
       puts "Total: #{all_images} images"
       if downloaded_images > 0
         puts "Downloaded #{downloaded_images} images."
-        puts "---------------------------------------"
       else
         puts "There's no new downloaded images."
       end
+      puts "----------------------------------------------------------"
     end
 
     def count_files(directory_name)
@@ -96,11 +97,27 @@ module Gig
     def handle_pagination(response_link)
       puts "Do want to continue with another page? Type 'yes' or 'no'"
       user_answer = STDIN.gets.strip
+
       if user_answer == "yes"
-        next_page_url = response_link.split(';').first.delete_prefix('<').delete_suffix('>')
+        pagination_links = pagination_links(response_link)
+        next_page_url    = pagination_links["next"]
+
         @uri = URI.parse(next_page_url)
         self.grep
       end
+    end
+
+    def pagination_links(response_link)
+      links = {}
+
+      response_link.split(',').each do |link|
+        link.strip!
+
+        parts = link.match(/<(.+)>; *rel="(.+)"/)
+        links[parts[2]] = parts[1]
+      end
+
+      links
     end
   end
 end
